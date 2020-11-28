@@ -30,6 +30,10 @@ public class MinioFile extends BaseEntity
     @Excel(name = "文件大小")
     private Long size;
 
+    /** 备注 */
+    @Excel(name = "备注")
+    private String marks;
+
     public void setFileId(Long fileId) 
     {
         this.fileId = fileId;
@@ -66,6 +70,15 @@ public class MinioFile extends BaseEntity
     {
         return size;
     }
+    public void setMarks(String marks) 
+    {
+        this.marks = marks;
+    }
+
+    public String getMarks() 
+    {
+        return marks;
+    }
 
     @Override
     public String toString() {
@@ -77,6 +90,8 @@ public class MinioFile extends BaseEntity
             .append("createTime", getCreateTime())
             .append("createBy", getCreateBy())
             .append("updateTime", getUpdateTime())
+            .append("updateBy", getUpdateBy())
+            .append("marks", getMarks())
             .toString();
     }
 }

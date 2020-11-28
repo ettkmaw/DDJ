@@ -58,4 +58,8 @@ public interface MinioFileMapper
      * @return 结果
      */
     public int deleteMinioFileByIds(Long[] fileIds);
+    /**
+     *
+     */
+    public Integer insertMinioFileAndReturnId(MinioFile minioFile);
 }

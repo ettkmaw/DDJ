@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.MinioFileMapper">
-    
+
     <resultMap type="MinioFile" id="MinioFileResult">
         <result property="fileId"    column="file_id"    />
         <result property="bucketName"    column="bucket_name"    />
@@ -12,26 +12,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="createBy"    column="create_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="marks"    column="marks"    />
     </resultMap>
 
     <sql id="selectMinioFileVo">
-        select file_id, bucket_name, file_name, size, create_time, create_by, update_time from minio_file
+        select file_id, bucket_name, file_name, size, create_time, create_by, update_time, update_by, marks from minio_file
     </sql>
 
     <select id="selectMinioFileList" parameterType="MinioFile" resultMap="MinioFileResult">
         <include refid="selectMinioFileVo"/>
-        <where>  
+        <where>
             <if test="bucketName != null  and bucketName != ''"> and bucket_name like concat('%', #{bucketName}, '%')</if>
             <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
             <if test="size != null "> and size = #{size}</if>
+            <if test="marks != null  and marks != ''"> and marks = #{marks}</if>
         </where>
     </select>
-    
+
     <select id="selectMinioFileById" parameterType="Long" resultMap="MinioFileResult">
         <include refid="selectMinioFileVo"/>
         where file_id = #{fileId}
     </select>
-        
+
     <insert id="insertMinioFile" parameterType="MinioFile" useGeneratedKeys="true" keyProperty="fileId">
         insert into minio_file
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -41,7 +44,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="createBy != null">create_by,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+            <if test="updateBy != null">update_by,</if>
+            <if test="marks != null">marks,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="bucketName != null">#{bucketName},</if>
             <if test="fileName != null">#{fileName},</if>
@@ -49,7 +54,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="marks != null">#{marks},</if>
+        </trim>
     </insert>
 
     <update id="updateMinioFile" parameterType="MinioFile">
@@ -61,6 +68,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="marks != null">marks = #{marks},</if>
         </trim>
         where file_id = #{fileId}
     </update>
@@ -70,10 +79,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteMinioFileByIds" parameterType="String">
-        delete from minio_file where file_id in 
+        delete from minio_file where file_id in
         <foreach item="fileId" collection="array" open="(" separator="," close=")">
             #{fileId}
         </foreach>
     </delete>
-    
+    <!--手动添加的sql语句-->
+    <insert id="insertMinioFileAndReturnId" parameterType="MinioFile" useGeneratedKeys="true" keyProperty="fileId">
+        <selectKey keyProperty="fileId" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+
+        insert into minio_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bucketName != null">bucket_name,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="size != null">size,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bucketName != null">#{bucketName},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="size != null">#{size},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
 </mapper>

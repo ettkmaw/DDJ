@@ -58,4 +58,11 @@ public interface IMinioFileService
      * @return 结果
      */
     public int deleteMinioFileById(Long fileId);
+    /**
+     * 新增minio文件并返回文件id
+     *
+     * @param minioFile minio文件
+     * @return 结果
+     */
+    public long insertMinioFileAndReturnId(MinioFile minioFile);
 }

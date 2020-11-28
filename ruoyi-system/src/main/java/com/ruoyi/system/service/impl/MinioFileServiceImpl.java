@@ -93,4 +93,9 @@ public class MinioFileServiceImpl implements IMinioFileService
     {
         return minioFileMapper.deleteMinioFileById(fileId);
     }
+
+    @Override
+    public long insertMinioFileAndReturnId(MinioFile minioFile) {
+        return minioFileMapper.insertMinioFileAndReturnId(minioFile);
+    }
 }

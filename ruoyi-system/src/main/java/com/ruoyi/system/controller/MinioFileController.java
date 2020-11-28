@@ -3,6 +3,9 @@ package com.ruoyi.system.controller;
 import java.util.List;
 
 import com.ruoyi.common.utils.MinioUtils;
+import com.ruoyi.common.utils.PreUpdate;
+import io.minio.ObjectStat;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -99,11 +102,34 @@ public class MinioFileController extends BaseController
     /**
      * 上传文件
      */
-    @PreAuthorize("@ss.hasPermi('system:file:upload')")
-    @Log(title = "minio文件", businessType = BusinessType.DELETE)
-    @PutMapping("/uploadMinioFile")
-    public AjaxResult upload(MultipartFile file, @RequestParam("bucketName") String bucketName)
+    //@PreAuthorize("@ss.hasPermi('system:file:upload')")
+    @Log(title = "minio文件", businessType = BusinessType.INSERT)
+    @PostMapping("/uploadMinioFile")
+    public AjaxResult upload(MultipartFile file, @RequestParam(value = "bucketName",required = false) String bucketName)
     {
-        return MinioUtils.uploadAndSaveToLocalDb(file, bucketName);
+        ObjectStat stat=MinioUtils.upload(file, bucketName);
+        MinioFile minioFile=new MinioFile();
+        BeanUtils.copyProperties(PreUpdate.preInsert(),minioFile);
+        minioFile.setBucketName(stat.bucketName());
+        minioFile.setFileName(stat.name());
+        minioFile.setSize(stat.length());
+        long fileId=minioFileService.insertMinioFileAndReturnId(minioFile);
+        return AjaxResult.success(fileId);
     }
+    /**
+     * 获取minio文件外链
+     */
+    @GetMapping("/fileId")
+    public AjaxResult getUrl(@RequestParam("fileId") Long fileId)
+    {   MinioFile file=minioFileService.selectMinioFileById(fileId);
+        return AjaxResult.success(MinioUtils.presignedPutObject(file.getBucketName(),file.getFileName(),null));
+    }
+    /**
+     * 获取minio文件服务器上的存储桶
+     */
+    @GetMapping("/listBuckets")
+    public AjaxResult getBucketList(){
+        return AjaxResult.success(MinioUtils.listBuckets());
+    }
+
 }

@@ -58,7 +58,7 @@ spring:
 # 文件服务器配置
 
 minio:
-    url: localhost
+    url: http://192.168.110.24:9000
     name: minioadmin
     password: minioadmin
     bucketName: temp
