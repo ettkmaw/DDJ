@@ -1,11 +1,12 @@
-package com.ruoyi.system.controller;
+package com.ruoyi.web.controller.common;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.MinioUtils;
 import com.ruoyi.common.utils.PreUpdate;
 import io.minio.ObjectStat;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ import com.ruoyi.system.service.IMinioFileService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.web.multipart.MultipartFile;
-
 /**
  * minio文件Controller
  * 
  * @author ruoyi
  * @date 2020-11-28
  */
+@Api(tags = "minio文件管理")
 @RestController
 @RequestMapping("/system/file")
 public class MinioFileController extends BaseController
@@ -126,6 +127,7 @@ public class MinioFileController extends BaseController
     /**
      * 上传文件到文件服务器
      */
+    @ApiOperation(value = "文件上传",notes = "文件上传")
     @PostMapping("/uploadMinioFile")
     public AjaxResult upload(MultipartFile file, @RequestParam(value = "bucketName",required = false) String bucketName)
     {
