@@ -123,6 +123,9 @@
     <!-- 添加或修改minio文件对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item  prop="size" type="hidden" >
+        <el-input v-model="form.size" type="hidden" />
+        </el-form-item>
         <el-form-item label="桶名" prop="bucketName" >
           <el-select
             v-model="form.bucketName"
@@ -144,12 +147,12 @@
           <el-upload
             class="upload-demo"
             v-model="form.fileName"
-            drag
-            :action=this.minioUploadAction
+            :headers="this.uploadParams.uploadHeader"
+            :action=this.uploadAction
+            :on-success="uploadSuccess"
             multiple>
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div class="el-upload__tip" slot="tip" STYLE="color: red">上传文件大小不超过10M</div>
           </el-upload>
         </el-form-item>
         <el-form-item label="备注" prop="marks">
@@ -166,6 +169,7 @@
 
 <script>
 import {listFile, getFile, delFile, addFile, updateFile, exportFile, getBuckets} from "@/api/system/file";
+import {getToken} from "@/utils/auth";
 
 export default {
   name: "File",
@@ -204,8 +208,11 @@ export default {
       // 表单校验
       rules: {},
       //上传url
-      url: {
-        uploadUrl: '/system/file/uploadMinioFile'
+      uploadParams: {
+        uploadUrl: '/system/file/uploadMinioFile',
+        uploadHeader:{
+          Authorization:'Bearer ' + getToken()
+        },
       },
       listBuckets: [],
     };
@@ -214,8 +221,8 @@ export default {
     this.getList();
   },
   computed: {
-    minioUploadAction() {
-      return window._CONFIG['domianURL'] + this.url.uploadUrl;
+    uploadAction() {
+      return window._CONFIG['domianURL'] + this.uploadParams.uploadUrl+"?bucketName="+this.form.bucketName;
     }
   },
   methods: {
@@ -335,6 +342,13 @@ export default {
         this.listBuckets = response.data;
       });
     },
+    uploadSuccess(response, file, fileList){
+      this.form.fileName=response.data.fileName;
+      this.form.size=response.data.size;
+      console.log(this.form.fileName)
+      console.log(this.form.size)
+      this.clearFiles();
+    }
   }
 }
 </script>

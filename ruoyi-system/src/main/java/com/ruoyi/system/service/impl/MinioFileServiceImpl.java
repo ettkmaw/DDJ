@@ -95,7 +95,7 @@ public class MinioFileServiceImpl implements IMinioFileService
     }
 
     @Override
-    public long insertMinioFileAndReturnId(MinioFile minioFile) {
+    public Long insertMinioFileAndReturnId(MinioFile minioFile) {
         return minioFileMapper.insertMinioFileAndReturnId(minioFile);
     }
 }

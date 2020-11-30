@@ -64,5 +64,5 @@ public interface IMinioFileService
      * @param minioFile minio文件
      * @return 结果
      */
-    public long insertMinioFileAndReturnId(MinioFile minioFile);
+    public Long insertMinioFileAndReturnId(MinioFile minioFile);
 }

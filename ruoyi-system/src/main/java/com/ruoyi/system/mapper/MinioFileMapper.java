@@ -59,7 +59,7 @@ public interface MinioFileMapper
      */
     public int deleteMinioFileByIds(Long[] fileIds);
     /**
-     *
+     *新增文件并返回文件id
      */
-    public Integer insertMinioFileAndReturnId(MinioFile minioFile);
+    public Long insertMinioFileAndReturnId(MinioFile minioFile);
 }

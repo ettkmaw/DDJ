@@ -2,6 +2,7 @@ package com.ruoyi.system.controller;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.MinioUtils;
 import com.ruoyi.common.utils.PreUpdate;
 import io.minio.ObjectStat;
@@ -100,21 +101,44 @@ public class MinioFileController extends BaseController
         return toAjax(minioFileService.deleteMinioFileByIds(fileIds));
     }
     /**
-     * 上传文件
+     * 上传文件到文件服务器并保存到数据库返回filId
      */
     //@PreAuthorize("@ss.hasPermi('system:file:upload')")
     @Log(title = "minio文件", businessType = BusinessType.INSERT)
-    @PostMapping("/uploadMinioFile")
-    public AjaxResult upload(MultipartFile file, @RequestParam(value = "bucketName",required = false) String bucketName)
+    @PostMapping("/uploadFile")
+    public AjaxResult uploadAndInsert(MultipartFile file, @RequestParam(value = "bucketName",required = false) String bucketName)
     {
         ObjectStat stat=MinioUtils.upload(file, bucketName);
+        if (stat==null) {
+            return AjaxResult.error("上传至文件服务器失败！");
+        }
         MinioFile minioFile=new MinioFile();
         BeanUtils.copyProperties(PreUpdate.preInsert(),minioFile);
         minioFile.setBucketName(stat.bucketName());
         minioFile.setFileName(stat.name());
         minioFile.setSize(stat.length());
-        long fileId=minioFileService.insertMinioFileAndReturnId(minioFile);
+        Long fileId=minioFileService.insertMinioFileAndReturnId(minioFile);
+        if (fileId==null){
+            return AjaxResult.error("上传服务器失败！");
+        }
         return AjaxResult.success(fileId);
+    }
+    /**
+     * 上传文件到文件服务器
+     */
+    @PostMapping("/uploadMinioFile")
+    public AjaxResult upload(MultipartFile file, @RequestParam(value = "bucketName",required = false) String bucketName)
+    {
+        MinioFile minioFile=new MinioFile();
+        ObjectStat stat=MinioUtils.upload(file, bucketName);
+        if (stat==null) {
+            return AjaxResult.error("上传至文件服务器失败！");
+        }
+        BeanUtils.copyProperties(PreUpdate.preInsert(),minioFile);
+        minioFile.setBucketName(stat.bucketName());
+        minioFile.setFileName(stat.name());
+        minioFile.setSize(stat.length());
+        return AjaxResult.success("上传成功",minioFile);
     }
     /**
      * 获取minio文件外链
@@ -131,5 +155,6 @@ public class MinioFileController extends BaseController
     public AjaxResult getBucketList(){
         return AjaxResult.success(MinioUtils.listBuckets());
     }
+
 
 }

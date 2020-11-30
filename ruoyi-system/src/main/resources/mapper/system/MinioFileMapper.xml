@@ -86,7 +86,7 @@
     </delete>
     <!--手动添加的sql语句-->
     <insert id="insertMinioFileAndReturnId" parameterType="MinioFile" useGeneratedKeys="true" keyProperty="fileId">
-        <selectKey keyProperty="fileId" order="AFTER" resultType="java.lang.Integer">
+        <selectKey keyProperty="fileId" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID()
         </selectKey>
 
