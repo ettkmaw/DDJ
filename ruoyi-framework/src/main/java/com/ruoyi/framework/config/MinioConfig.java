@@ -1,4 +1,4 @@
-package com.ruoyi.common.config;
+package com.ruoyi.framework.config;
 
 import com.ruoyi.common.utils.MinioUtils;
 import org.springframework.beans.factory.annotation.Value;

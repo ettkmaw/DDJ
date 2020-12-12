@@ -2,7 +2,6 @@ package com.ruoyi.common.utils;
 
 import com.ruoyi.common.core.domain.CommonEntityField;
 
-import java.security.Principal;
 import java.util.Date;
 
 public class PreUpdate {

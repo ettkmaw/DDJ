@@ -2,6 +2,8 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.PreUpdate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.MinioFileMapper;
@@ -53,7 +55,7 @@ public class MinioFileServiceImpl implements IMinioFileService
     @Override
     public int insertMinioFile(MinioFile minioFile)
     {
-        minioFile.setCreateTime(DateUtils.getNowDate());
+        BeanUtils.copyProperties(PreUpdate.preInsert(),minioFile);
         return minioFileMapper.insertMinioFile(minioFile);
     }
 

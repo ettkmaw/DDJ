@@ -56,6 +56,10 @@ public class Constants
      * 验证码 redis key
      */
     public static final String CAPTCHA_CODE_KEY = "captcha_codes:";
+    /**
+     * 邮箱验证码 redis key
+     */
+    public static final String CAPTCHA_EMAIL_CODE_KEY = "email_captcha_codes:";
 
     /**
      * 登录用户 redis key

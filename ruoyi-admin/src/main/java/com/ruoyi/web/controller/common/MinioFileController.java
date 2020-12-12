@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * minio文件Controller
  * 
- * @author ruoyi
+ * @author loken
  * @date 2020-11-28
  */
 @Api(tags = "minio文件管理")
@@ -136,7 +136,6 @@ public class MinioFileController extends BaseController
         if (stat==null) {
             return AjaxResult.error("上传至文件服务器失败！");
         }
-        BeanUtils.copyProperties(PreUpdate.preInsert(),minioFile);
         minioFile.setBucketName(stat.bucketName());
         minioFile.setFileName(stat.name());
         minioFile.setSize(stat.length());
